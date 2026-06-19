@@ -15,7 +15,15 @@ import {
   User,
 } from "lucide-react";
 
-function CommitRow({ commit }: { commit: Commit }) {
+function CommitRow({
+  commit,
+  owner,
+  name,
+}: {
+  commit: Commit;
+  owner: string;
+  name: string;
+}) {
   const [open, setOpen] = useState(false);
   const lines = commit.message.split("\n");
   const title = lines[0];
@@ -244,7 +252,7 @@ export default function CommitsPage() {
       {/* Commit list */}
       <div className="space-y-2">
         {filtered.map((commit) => (
-          <CommitRow key={commit.sha} commit={commit} />
+          <CommitRow key={commit.sha} commit={commit} owner={owner} name={name} />
         ))}
         {filtered.length === 0 && (
           <div className="py-12 text-center text-white/25 text-sm">
