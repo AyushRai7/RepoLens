@@ -32,7 +32,7 @@ function CommitRow({ commit }: { commit: Commit }) {
 
         <div className="flex-1 min-w-0">
           <a
-            href={commit.github_url}
+            href={`https://github.com/${owner}/${name}/commit/${commit.sha}`}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
