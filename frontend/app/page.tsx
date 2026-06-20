@@ -1,61 +1,93 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { analyzeRepo } from '../lib/api'
-import { ArrowRight, GitBranch, MessageSquare, FileText, Zap, Network, BookOpen } from 'lucide-react'
-import { FaGithub } from 'react-icons/fa'
-import { cn } from '../lib/utils'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { analyzeRepo } from "../lib/api";
+import {
+  ArrowRight,
+  GitBranch,
+  MessageSquare,
+  FileText,
+  Zap,
+  BookOpen,
+  Network,
+} from "lucide-react";
+import { FaGithub } from "react-icons/fa";
+import { cn } from "../lib/utils";
+import Image from "next/image";
 
 const EXAMPLE_REPOS = [
-  'https://github.com/tiangolo/fastapi',
-  'https://github.com/vercel/next.js',
-  'https://github.com/django/django',
-  'https://github.com/expressjs/express',
-]
+  "https://github.com/tiangolo/fastapi",
+  "https://github.com/vercel/next.js",
+  "https://github.com/django/django",
+  "https://github.com/expressjs/express",
+];
 
 const FEATURES = [
-  { icon: Network, title: 'Visual code graph', desc: 'See every file and how they connect — imports, layers, call flows' },
-  { icon: MessageSquare, title: 'AI chat', desc: 'Ask anything about the code. Click any file to chat about it specifically' },
-  { icon: FileText, title: 'Auto documentation', desc: 'Generate and download full docs for any file or the entire repo' },
-  { icon: GitBranch, title: 'Commit timeline', desc: 'Interactive history with AI explanations of every change' },
-  { icon: Zap, title: 'DB schema & APIs', desc: 'Auto-extracted ERDs, API routes, and dependency analysis' },
-  { icon: BookOpen, title: 'Health score', desc: 'Instant quality score — tests, docs, security, complexity' },
-]
+  {
+    icon: Network,
+    title: "Visual code graph",
+    desc: "See every file and how they connect — imports, layers, call flows",
+  },
+  {
+    icon: MessageSquare,
+    title: "AI chat",
+    desc: "Ask anything about the code. Click any file to chat about it specifically",
+  },
+  {
+    icon: FileText,
+    title: "Auto documentation",
+    desc: "Generate and download full docs for any file or the entire repo",
+  },
+  {
+    icon: GitBranch,
+    title: "Commit timeline",
+    desc: "Interactive history with AI explanations of every change",
+  },
+  {
+    icon: Zap,
+    title: "DB schema & APIs",
+    desc: "Auto-extracted ERDs, API routes, and dependency analysis",
+  },
+  {
+    icon: BookOpen,
+    title: "Health score",
+    desc: "Instant quality score — tests, docs, security, complexity",
+  },
+];
 
 export default function HomePage() {
-  const router = useRouter()
-  const [url, setUrl] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const router = useRouter();
+  const [url, setUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent | null, overrideUrl?: string) {
-    if (e) e.preventDefault()
-    const repoUrl = overrideUrl || url
-    if (!repoUrl.trim()) return
+    if (e) e.preventDefault();
+    const repoUrl = overrideUrl || url;
+    if (!repoUrl.trim()) return;
 
-    setLoading(true)
-    setError('')
+    setLoading(true);
+    setError("");
 
     try {
-      const result = await analyzeRepo(repoUrl.trim())
-      const [owner, name] = result.full_name.split('/')
-      router.push(`/repo/${owner}/${name}`)
+      const result = await analyzeRepo(repoUrl.trim());
+      const [owner, name] = result.full_name.split("/");
+      router.push(`/repo/${owner}/${name}`);
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setError(err.message)
-      } else if (typeof err === 'string') {
-        setError(err)
+        setError(err.message);
+      } else if (typeof err === "string") {
+        setError(err);
       } else {
-        setError('Failed to analyze repository')
+        setError("Failed to analyze repository");
       }
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   return (
     <main className="min-h-screen bg-[#0a0a0f] text-white overflow-hidden">
-
       {/* Background glow */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[50%] translate-x-[-50%] w-[800px] h-[500px] bg-violet-600/10 rounded-full blur-[120px]" />
@@ -63,14 +95,24 @@ export default function HomePage() {
       </div>
 
       <div className="relative z-10">
-
         {/* Nav */}
         <nav className="flex items-center justify-between px-6 py-4 border-b border-white/5">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-violet-600 flex items-center justify-center">
-              <Network className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-semibold text-white">RepoExplorer</span>
+          <div className="flex items-center gap-3">
+            <Image
+              src="/logo.png"
+              alt="RepoLens Logo"
+              width={38}
+              height={38}
+              priority
+              className="rounded-lg"
+            />
+
+            <span className="text-xl font-bold tracking-tight">
+              <span className="text-white">Repo</span>
+              <span className="bg-gradient-to-r from-violet-500 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+                Lens
+              </span>
+            </span>
           </div>
           <a
             href="https://github.com"
@@ -91,11 +133,11 @@ export default function HomePage() {
           </div>
 
           <h1 className="text-5xl sm:text-6xl font-bold tracking-tight mb-5 max-w-3xl">
-            Understand any{' '}
+            Understand any{" "}
             <span className="bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">
               GitHub repo
-            </span>
-            {' '}instantly
+            </span>{" "}
+            instantly
           </h1>
 
           <p className="text-lg text-white/50 max-w-xl mb-10">
@@ -105,15 +147,22 @@ export default function HomePage() {
 
           {/* URL input */}
           <form onSubmit={handleSubmit} className="w-full max-w-2xl mb-4">
-            <div className={cn(
-              'flex items-center gap-2 p-2 rounded-xl border bg-white/5 backdrop-blur-sm transition-all',
-              error ? 'border-red-500/50' : 'border-white/10 focus-within:border-violet-500/50'
-            )}>
+            <div
+              className={cn(
+                "flex items-center gap-2 p-2 rounded-xl border bg-white/5 backdrop-blur-sm transition-all",
+                error
+                  ? "border-red-500/50"
+                  : "border-white/10 focus-within:border-violet-500/50",
+              )}
+            >
               <FaGithub className="w-5 h-5 text-white/30 ml-2 flex-shrink-0" />
               <input
                 type="text"
                 value={url}
-                onChange={(e) => { setUrl(e.target.value); setError('') }}
+                onChange={(e) => {
+                  setUrl(e.target.value);
+                  setError("");
+                }}
                 placeholder="https://github.com/owner/repository"
                 className="flex-1 bg-transparent text-white placeholder:text-white/25 text-sm outline-none py-2"
                 disabled={loading}
@@ -122,10 +171,10 @@ export default function HomePage() {
                 type="submit"
                 disabled={loading || !url.trim()}
                 className={cn(
-                  'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all',
+                  "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
                   loading || !url.trim()
-                    ? 'bg-violet-600/40 text-white/40 cursor-not-allowed'
-                    : 'bg-violet-600 hover:bg-violet-500 text-white cursor-pointer'
+                    ? "bg-violet-600/40 text-white/40 cursor-not-allowed"
+                    : "bg-violet-600 hover:bg-violet-500 text-white cursor-pointer",
                 )}
               >
                 {loading ? (
@@ -142,7 +191,9 @@ export default function HomePage() {
               </button>
             </div>
             {error && (
-              <p className="text-red-400 text-xs mt-2 text-left pl-2">{error}</p>
+              <p className="text-red-400 text-xs mt-2 text-left pl-2">
+                {error}
+              </p>
             )}
           </form>
 
@@ -150,17 +201,20 @@ export default function HomePage() {
           <div className="flex flex-wrap justify-center gap-2">
             <span className="text-xs text-white/30">Try:</span>
             {EXAMPLE_REPOS.map((repo) => {
-              const short = repo.replace('https://github.com/', '')
+              const short = repo.replace("https://github.com/", "");
               return (
                 <button
                   key={repo}
-                  onClick={() => { setUrl(repo); handleSubmit(null, repo) }}
+                  onClick={() => {
+                    setUrl(repo);
+                    handleSubmit(null, repo);
+                  }}
                   disabled={loading}
                   className="text-xs px-3 py-1 rounded-full border border-white/10 text-white/40 hover:text-white/70 hover:border-white/20 transition-all disabled:opacity-30"
                 >
                   {short}
                 </button>
-              )
+              );
             })}
           </div>
         </section>
@@ -176,14 +230,17 @@ export default function HomePage() {
                 <div className="w-8 h-8 rounded-lg bg-violet-600/20 flex items-center justify-center mb-3 group-hover:bg-violet-600/30 transition-colors">
                   <feature.icon className="w-4 h-4 text-violet-400" />
                 </div>
-                <h3 className="font-medium text-white/90 text-sm mb-1">{feature.title}</h3>
-                <p className="text-xs text-white/40 leading-relaxed">{feature.desc}</p>
+                <h3 className="font-medium text-white/90 text-sm mb-1">
+                  {feature.title}
+                </h3>
+                <p className="text-xs text-white/40 leading-relaxed">
+                  {feature.desc}
+                </p>
               </div>
             ))}
           </div>
         </section>
-
       </div>
     </main>
-  )
+  );
 }
