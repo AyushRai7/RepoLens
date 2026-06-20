@@ -100,6 +100,9 @@ export function useChat(owner: string, name: string) {
     }
 
     function doConnect() {
+      const url = getWsUrl(owner, name);
+      console.log("Opening WebSocket:", url);
+
       const entry = wsRegistry[key]
       if (!entry || entry.dead) return
 
@@ -182,28 +185,37 @@ export function useChat(owner: string, name: string) {
         }
       }
 
-      ws.onclose = () => {
-        entry.backendReady = false
-        setConnected(false)
-        setLoading(false)
+      ws.onclose = (event) => {
+  console.log(
+    "WS CLOSE",
+    event.code,
+    event.reason,
+    event.wasClean
+  );
 
-        // Finalize any in-flight streaming message
-        const sid = entry.streamingId
-        if (sid) {
-          finalizeMessage(key, sid)
-          entry.streamingId = null
-        }
+  entry.backendReady = false;
+  setConnected(false);
+  setLoading(false);
 
-        const e = wsRegistry[key]
-        if (!e || e.dead) return
+  // Finalize any in-flight streaming message
+  const sid = entry.streamingId;
+  if (sid) {
+    finalizeMessage(key, sid);
+    entry.streamingId = null;
+  }
 
-        const delay = Math.min(e.reconnectDelay * 2, 8000)
-        e.reconnectDelay = delay
-        setStatusMessage(`Reconnecting in ${Math.round(delay / 1000)}s…`)
-        e.reconnectTimer = setTimeout(doConnect, delay)
-      }
+  const registryEntry = wsRegistry[key];
+  if (!registryEntry || registryEntry.dead) return;
 
-      ws.onerror = () => { /* onclose fires immediately after */ }
+  const delay = Math.min(registryEntry.reconnectDelay * 2, 8000);
+  registryEntry.reconnectDelay = delay;
+  setStatusMessage(`Reconnecting in ${Math.round(delay / 1000)}s…`);
+  registryEntry.reconnectTimer = setTimeout(doConnect, delay);
+};
+
+      ws.onerror = (e) => {
+  console.error("WS ERROR", e);
+};
     }
 
     connect(0)
