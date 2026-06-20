@@ -99,7 +99,7 @@ export default function HomePage() {
         <nav className="flex items-center justify-between px-6 py-4 border-b border-white/5">
           <div className="flex items-center gap-3">
             <Image
-              src="/logo.png"
+              src="/Logo.png"
               alt="RepoLens Logo"
               width={38}
               height={38}
